@@ -1,13 +1,20 @@
 package com.arthur;
 
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 import org.junit.Test;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 public class OutOfMemoryTest {
 
-    class OOMObject {}
+    static class OOMObject {
+        public OOMObject() {
+        }
+    }
 
     /**
      * 堆内存溢出
@@ -15,7 +22,7 @@ public class OutOfMemoryTest {
      */
     @Test
     public void heapOOM() {
-        List<OOMObject> oomObjects = new ArrayList<>();
+        List<OOMObject> oomObjects = new ArrayList<OOMObject>();
         while (true) {
             oomObjects.add(new OOMObject());
         }
@@ -29,7 +36,7 @@ public class OutOfMemoryTest {
      * -Xss128K
      */
     @Test
-    public void stackOOM() {
+    public void stackOOM() throws Throwable {
         try {
             stackLeak();
         } catch (Throwable e) {
@@ -69,11 +76,32 @@ public class OutOfMemoryTest {
      */
     @Test
     public void runtimeConstantPoolOOM() {
-        List<String> list = new ArrayList<>();
+        List<String> list = new ArrayList<String>();
         int i = 0;
         while (true) {
             list.add(String.valueOf(i++).intern());
         }
+    }
+
+    /**
+     * 方法区内存溢出
+     * -XX:PermSize=10M -XX:MaxPermSize=10M
+     */
+    @Test
+    public void methodAreaOOM() {
+        while (true) {
+            Enhancer enhancer = new Enhancer();
+            enhancer.setSuperclass(OOMObject.class);
+            enhancer.setUseCache(false);
+            enhancer.setCallback(new MethodInterceptor() {
+                @Override
+                public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+                    return methodProxy.invokeSuper(o, objects);
+                }
+            });
+            enhancer.create();
+        }
+
     }
 
 }
