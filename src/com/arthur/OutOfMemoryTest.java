@@ -4,7 +4,9 @@ import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
 import net.sf.cglib.proxy.MethodProxy;
 import org.junit.Test;
+import sun.misc.Unsafe;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +103,23 @@ public class OutOfMemoryTest {
             });
             enhancer.create();
         }
+    }
 
+    private static final int _1MB = 1024 * 1024;
+
+    /**
+     * 直接内存溢出
+     * -verbose:gc -Xms20M -XX:MaxDirectMemorySize=10M -XX:+PrintGCDetails -XX:SurvivorRatio=8
+     * @throws IllegalAccessException
+     */
+    @Test
+    public void directOOM() throws IllegalAccessException {
+        Field unsafeField = Unsafe.class.getDeclaredFields()[0];
+        unsafeField.setAccessible(true);
+        Unsafe unsafe = (Unsafe) unsafeField.get(null);
+        while (true) {
+            unsafe.allocateMemory(_1MB);
+        }
     }
 
 }
