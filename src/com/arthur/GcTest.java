@@ -2,6 +2,9 @@ package com.arthur;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GcTest {
 
     private static final int _1MB = 1024 * 1024;
@@ -82,6 +85,61 @@ public class GcTest {
         allocation5 = null;
         allocation6 = null;
         allocation7 = new byte[2 * _1MB];
+    }
+
+    @Test
+    public void testList() {
+        List<String> sList = new ArrayList<String>();
+        sList.add("a");
+        sList.add("b");
+        sList.add("c");
+        sList.add("d");
+        sList.add("e");
+        sList.add("f");
+        sList.add("g");
+//sList.size() = 7
+
+        List<String> subList = sList.subList(0, 4);
+//subList = [a, b, c, d]
+
+        subList.remove(1);
+        subList.remove(2);
+
+        subList.add("h");
+        subList.add("J");
+        System.out.println(sList);
+
+    }
+
+    @Test
+    public void testException() {
+        System.out.println(testException1());
+    }
+
+
+    public int testException1() {
+        int x;
+        try {
+            x = 1;
+            return x;
+        } catch (Exception e) {
+            x = 2;
+            return x;
+        } finally {
+            System.out.println("haha");
+            x = 3;
+            return x;
+        }
+    }
+
+    public int testException2() {
+        try {
+            return 0;
+        } catch (Exception e) {
+            return 1;
+        } finally {
+            return 2;
+        }
     }
 
 }

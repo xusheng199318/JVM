@@ -27,4 +27,9 @@ public class ReferenceCountingGC {
         System.gc();
     }
 
+    @Test
+    public void testM() throws Exception {
+        CryptographUtil.toDe("csHasjw0tMUCzhLkIoUw2Wvxg2YSzz8yOTbYufhL/QFuAxVjzOAuIWKAZwaTN7IcfrZ/3oOCSKWwW3Q+U8bUwof8vcp3OxA6817gpfDYON5qM27CR7fHQ7nm08WJPP8VHEQ9z7UXtQvXLxjgCeGW2w==","HCLp01RbzW6oB8VeXVZjqA==");
+    }
+
 }
