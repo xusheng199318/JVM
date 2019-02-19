@@ -15,7 +15,7 @@ public class SpaceTest {
     @Test
     /**
      * -verbose:gc -Xms20M -Xmx20M -Xmn10M
-     * -XX:+PrintGCDetails -XX:+UseParNewGC -XX:PretenureSizeThreshold=3145728
+     * -XX:+PrintGCDetails -XX:+UseSerialGC -XX:PretenureSizeThreshold=3145728
      */
     public void testEden() {
         int m = 1024 * 1024;
@@ -26,7 +26,7 @@ public class SpaceTest {
     @Test
     /**
      * -verbose:gc -XX:+PrintGCDetails
-     * -Xms20M -Xmx20M -Xmn10M -XX:+UseParNewGC
+     * -Xms20M -Xmx20M -Xmn10M -XX:+UseSerialGC
      * -XX:MaxTenuringThreshold=1 -XX:+PrintTenuringDistribution
      */
     public void testMaxTenuringThreshold() throws InterruptedException {
@@ -37,6 +37,24 @@ public class SpaceTest {
         allocation3 = new byte[4 * m];
         allocation3 = null;
         allocation3 = new byte[4 * m];
+    }
+
+    @Test
+    /**
+     * -verbose:gc -Xms20M -Xmx20M  -Xmn10M
+     * -XX:+PrintGCDetails -XX:SurvivorRatio=8
+     * -XX:MaxTenuringThreshold=15 -XX:+UseSerialGC
+     * -XX:+PrintTenuringDistribution
+     */
+    public void testMaxTenuringThreshold1() {
+        int m = 1024 * 1024;
+        byte[] allocation1, allocation2, allocation3, allocation4;
+        allocation1 = new byte[m / 4];
+        allocation2 = new byte[m / 2];
+        allocation3 = new byte[m * 4];
+        allocation4 = new byte[m * 4];
+        allocation4 = null;
+        allocation4 = new byte[m * 4];
     }
 
 
